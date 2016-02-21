@@ -1,54 +1,172 @@
-This directory contains the cookbooks used to configure systems in your infrastructure with Chef.
+yum-epel Cookbook
+============
+[![Build Status](https://travis-ci.org/chef-cookbooks/yum-epel.svg?branch=master)](http://travis-ci.org/chef-cookbooks/yum-epel)
+[![Cookbook Version](https://img.shields.io/cookbook/v/yum-epel.svg)](https://supermarket.chef.io/cookbooks/yum-epel)
 
-Knife needs to be configured to know where the cookbooks are located with the `cookbook_path` setting. If this is not set, then several cookbook operations will fail to work properly.
+The yum-epel cookbook takes over management of the default
+repositoryids shipped with epel-release. It allows attribute
+manipulation of `epel`, `epel-debuginfo`, `epel-source`, `epel-testing`,
+`epel-testing-debuginfo`, and `epel-testing-source`.
 
-    cookbook_path ["./cookbooks"]
+Requirements
+------------
+#### Platforms
+* RHEL/CentOS and derivatives
+* Fedora
 
-This setting tells knife to look for the cookbooks directory in the present working directory. This means the knife cookbook subcommands need to be run in the `chef-repo` directory itself. To make sure that the cookbooks can be found elsewhere inside the repository, use an absolute path. This is a Ruby file, so something like the following can be used:
+#### Chef
+* Chef 11+
 
-    current_dir = File.dirname(__FILE__)
-    cookbook_path ["#{current_dir}/../cookbooks"]
+#### Cookbooks
+* yum version 3.2.0 or higher
 
-Which will set `current_dir` to the location of the knife.rb file itself (e.g. `~/chef-repo/.chef/knife.rb`).
 
-Configure knife to use your preferred copyright holder, email contact and license. Add the following lines to `.chef/knife.rb`.
+Attributes
+----------
+The following attributes are set by default
 
-    cookbook_copyright "Example, Com."
-    cookbook_email     "cookbooks@example.com"
-    cookbook_license   "apachev2"
+``` ruby
+default['yum-epel']['repositories'] = %w{epel epel-debuginfo epel-source epel-testing epel-testing-debuginfo epel-testing-source}
+```
 
-Supported values for `cookbook_license` are "apachev2", "mit","gplv2","gplv3",  or "none". These settings are used to prefill comments in the default recipe, and the corresponding values in the metadata.rb. You are free to change the the comments in those files.
+``` ruby
+default['yum']['epel']['repositoryid'] = 'epel'
+default['yum']['epel']['description'] = 'Extra Packages for Enterprise Linux 6 - $basearch'
+default['yum']['epel']['mirrorlist'] = 'http://mirrors.fedoraproject.org/mirrorlist?repo=epel-5&arch=$basearch'
+default['yum']['epel']['gpgkey'] = 'http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6'
+default['yum']['epel']['failovermethod'] = 'priority'
+default['yum']['epel']['gpgcheck'] = true
+default['yum']['epel']['enabled'] = true
+default['yum']['epel']['managed'] = true
+```
 
-Create new cookbooks in this directory with Knife.
+``` ruby
+default['yum']['epel-debuginfo']['repositoryid'] = 'epel-debuginfo'
+default['yum']['epel-debuginfo']['description'] = 'Extra Packages for Enterprise Linux 6 - $basearch - Debug'
+default['yum']['epel-debuginfo']['mirrorlist'] = 'https://mirrors.fedoraproject.org/metalink?repo=epel-debug-6&arch=$basearch'
+default['yum']['epel-debuginfo']['gpgkey'] = 'http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6'
+default['yum']['epel-debuginfo']['failovermethod'] = 'priority'
+default['yum']['epel-debuginfo']['gpgcheck'] = true
+default['yum']['epel-debuginfo']['enabled'] = false
+default['yum']['epel-debuginfo']['managed'] = false
+```
 
-    knife cookbook create COOKBOOK
+``` ruby
+default['yum']['epel-source']['repositoryid'] = 'epel-source'
+default['yum']['epel-source']['description'] = 'Extra Packages for Enterprise Linux 6 - $basearch - Source'
+default['yum']['epel-source']['mirrorlist'] = 'http://mirrors.fedoraproject.org/mirrorlist?repo=epel-source-6&arch=$basearch'
+default['yum']['epel-source']['gpgkey'] = 'http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6'
+default['yum']['epel-source']['failovermethod'] = 'priority'
+default['yum']['epel-source']['gpgcheck'] = true
+default['yum']['epel-source']['enabled'] = false
+default['yum']['epel-source']['managed'] = false
+```
 
-This will create all the cookbook directory components. You don't need to use them all, and can delete the ones you don't need. It also creates a README file, metadata.rb and default recipe.
+``` ruby
+default['yum']['epel-testing']['repositoryid'] = 'epel-testing'
+default['yum']['epel-testing']['description'] = 'Extra Packages for Enterprise Linux 6 - Testing - $basearch'
+default['yum']['epel-testing']['mirrorlist'] = 'https://mirrors.fedoraproject.org/metalink?repo=testing-epel6&arch=$basearch'
+default['yum']['epel-testing']['gpgkey'] = 'http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6r'
+default['yum']['epel-testing']['failovermethod'] = 'priority'
+default['yum']['epel-testing']['gpgcheck'] = true
+default['yum']['epel-testing']['enabled'] = false
+default['yum']['epel-testing']['managed'] = false
+```
 
-You can also download cookbooks directly from the Opscode Cookbook Site. There are two subcommands to help with this depending on what your preference is.
+``` ruby
+default['yum']['epel-testing-debuginfo']['repositoryid'] = 'epel-testing-debuginfo'
+default['yum']['epel-testing-debuginfo']['description'] = 'Extra Packages for Enterprise Linux 6 - Testing - $basearch Debug'
+default['yum']['epel-testing-debuginfo']['mirrorlist'] = 'https://mirrors.fedoraproject.org/metalink?repo=testing-debug-epel6&arch=$basearch'
+default['yum']['epel-testing-debuginfo']['gpgkey'] = 'http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6'
+default['yum']['epel-testing-debuginfo']['failovermethod'] = 'priority'
+default['yum']['epel-testing-debuginfo']['gpgcheck'] = true
+default['yum']['epel-testing-debuginfo']['enabled'] = false
+default['yum']['epel-testing-debuginfo']['managed'] = false
+```
 
-The first and recommended method is to use a vendor branch if you're using Git. This is automatically handled with Knife.
+``` ruby
+default['yum']['epel-testing-source']['repositoryid'] = 'epel-testing-source'
+default['yum']['epel-testing-source']['description'] = 'Extra Packages for Enterprise Linux 6 - Testing - $basearch Source'
+default['yum']['epel-testing-source']['mirrorlist'] = 'https://mirrors.fedoraproject.org/metalink?repo=testing-source-epel6&arch=$basearch'
+default['yum']['epel-testing-source']['gpgkey'] = 'http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6'
+default['yum']['epel-testing-source']['failovermethod'] = 'priority'
+default['yum']['epel-testing-source']['gpgcheck'] = true
+default['yum']['epel-testing-source']['enabled'] = false
+default['yum']['epel-testing-source']['managed'] = false
+```
 
-    knife cookbook site install COOKBOOK
+Recipes
+-------
+* default - Walks through node attributes and feeds a yum_resource
+  parameters. The following is an example a resource generated by the
+  recipe during compilation.
 
-This will:
+```ruby
+  yum_repository 'epel' do
+    mirrorlist 'http://mirrors.fedoraproject.org/mirrorlist?repo=epel-5&arch=$basearch'
+    description 'Extra Packages for Enterprise Linux 5 - $basearch'
+    enabled true
+    gpgcheck true
+    gpgkey 'http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL'
+  end
+```
 
-* Download the cookbook tarball from cookbooks.opscode.com.
-* Ensure its on the git master branch.
-* Checks for an existing vendor branch, and creates if it doesn't.
-* Checks out the vendor branch (chef-vendor-COOKBOOK).
-* Removes the existing (old) version.
-* Untars the cookbook tarball it downloaded in the first step.
-* Adds the cookbook files to the git index and commits.
-* Creates a tag for the version downloaded.
-* Checks out the master branch again.
-* Merges the cookbook into master.
-* Repeats the above for all the cookbooks dependencies, downloading them from the community site
+Usage Example
+-------------
+To disable the epel repository through a Role or Environment definition
 
-The last step will ensure that any local changes or modifications you have made to the cookbook are preserved, so you can keep your changes through upstream updates.
+```
+default_attributes(
+  :yum => {
+    :epel => {
+      :enabled => {
+        false
+       }
+     }
+   }
+ )
+```
 
-If you're not using Git, use the site download subcommand to download the tarball.
+Uncommonly used repositoryids are not managed by default. This is
+speeds up integration testing pipelines by avoiding yum-cache builds
+that nobody cares about. To enable the epel-testing repository with a
+wrapper cookbook, place the following in a recipe:
 
-    knife cookbook site download COOKBOOK
+```
+node.default['yum']['epel-testing']['enabled'] = true
+node.default['yum']['epel-testing']['managed'] = true
+include_recipe 'yum-epel'
+```
 
-This creates the COOKBOOK.tar.gz from in the current directory (e.g., `~/chef-repo`). We recommend following a workflow similar to the above for your version control tool.
+More Examples
+-------------
+Point the epel repositories at an internally hosted server.
+
+```
+node.default['yum']['epel']['enabled'] = true
+node.default['yum']['epel']['mirrorlist'] = nil
+node.default['yum']['epel']['baseurl'] = 'https://internal.example.com/centos/6/os/x86_64'
+node.default['yum']['epel']['sslverify'] = false
+
+include_recipe 'yum-epel'
+```
+
+License & Authors
+-----------------
+
+**Author:** Cookbook Engineering Team (<cookbooks@chef.io>)
+
+**Copyright:** 2011-2015, Chef Software, Inc.
+```
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
